@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
 import { Geist } from 'next/font/google'
@@ -25,14 +26,27 @@ export default function RootLayout({
    children: React.ReactNode
 }>) {
    return (
-      <html lang="en" suppressHydrationWarning>
+      <html lang='en' suppressHydrationWarning>
          <body className={`${geistSans.className} antialiased`}>
             <ThemeProvider
-               attribute="class"
-               defaultTheme="system"
+               attribute='class'
+               defaultTheme='system'
                enableSystem
                disableTransitionOnChange
             >
+               <Toaster
+                  position='top-center'
+                  toastOptions={{
+                     classNames: {
+                        success:
+                           '!border-green-200 !bg-green-50 !text-green-800 [&_svg]:!text-green-600 [&>*>svg]:!text-green-600',
+                        error: '!border-red-200 !bg-red-50 !text-red-800 [&_svg]:!text-red-500 [&>*>svg]:!text-red-500',
+                        warning:
+                           '!border-orange-400 !bg-orange-50 !text-orange-500 [&_svg]:!text-orange-500 [&>*>svg]:!text-orange-500',
+                        info: '!border-blue-200 !bg-blue-50 !text-blue-800 [&_svg]:!text-blue-500 [&>*>svg]:!text-blue-500'
+                     }
+                  }}
+               />
                {children}
             </ThemeProvider>
          </body>
