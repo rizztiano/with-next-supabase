@@ -1,14 +1,17 @@
+import BlogDialog from '@/components/blog/blog-dialog'
 import BlogList from '@/components/blog/blog-list'
+import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
-import { sbServerIsAuthenticated } from '@/lib/supabase/helpers'
 import { Suspense } from 'react'
 
 const Page = async () => {
-   const authenticated = await sbServerIsAuthenticated()
-
    return (
-      <div className='flex-1 w-full flex flex-col'>
-         <div className='flex'></div>
+      <div className='flex-1 w-full flex flex-col gap-8'>
+         <div className='flex'>
+            <BlogDialog
+               button={<Button className='bg-green-600 hover:bg-green-700'>Create</Button>}
+            />
+         </div>
          <div className='flex'>
             <Suspense
                fallback={
@@ -17,7 +20,7 @@ const Page = async () => {
                   </div>
                }
             >
-               <BlogList mine={false} />
+               <BlogList mine />
             </Suspense>
          </div>
       </div>

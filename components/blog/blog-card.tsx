@@ -20,10 +20,9 @@ import { Edit, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-const BlogCard = ({ blog }: { blog: any }) => {
+const BlogCard = ({ blog, authenticated }: { blog: any; authenticated: boolean }) => {
    const [loading, setLoading] = useState<boolean>(false)
    const [openDelete, setOpenDelete] = useState<boolean>(false)
-   const [openEdit, setOpenEdit] = useState<boolean>(false)
 
    const deleteBlogAction = async () => {
       setLoading(true)
@@ -45,36 +44,41 @@ const BlogCard = ({ blog }: { blog: any }) => {
                </div>
                {blog.title}
             </CardTitle>
-            <CardAction className='flex items-center gap-1'>
-               <BlogDialog button={<Edit className='text-green-700/80' size={18} />} blog={blog} />
-               <Dialog open={openDelete} onOpenChange={setOpenDelete}>
-                  <DialogTrigger>
-                     <Trash className='cursor-pointer text-red-600/80' size={18} />
-                  </DialogTrigger>
-                  <DialogContent>
-                     <DialogHeader>
-                        <DialogTitle>Are you absolutely sure?</DialogTitle>
-                        <DialogDescription>
-                           This action cannot be undone. This will permanently delete your blog.
-                        </DialogDescription>
-                     </DialogHeader>
-                     <DialogFooter>
-                        <DialogClose asChild>
-                           <Button variant='outline'>Cancel</Button>
-                        </DialogClose>
-                        <Button
-                           disabled={loading}
-                           className='bg-red-600/80 hover:bg-red-600'
-                           type='button'
-                           onClick={deleteBlogAction}
-                        >
-                           {loading && <Spinner />}
-                           Delete
-                        </Button>
-                     </DialogFooter>
-                  </DialogContent>
-               </Dialog>
-            </CardAction>
+            {authenticated && (
+               <CardAction className='flex items-center gap-1'>
+                  <BlogDialog
+                     button={<Edit className='text-green-700/80' size={18} />}
+                     blog={blog}
+                  />
+                  <Dialog open={openDelete} onOpenChange={setOpenDelete}>
+                     <DialogTrigger>
+                        <Trash className='cursor-pointer text-red-600/80' size={18} />
+                     </DialogTrigger>
+                     <DialogContent>
+                        <DialogHeader>
+                           <DialogTitle>Are you absolutely sure?</DialogTitle>
+                           <DialogDescription>
+                              This action cannot be undone. This will permanently delete your blog.
+                           </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                           <DialogClose asChild>
+                              <Button variant='outline'>Cancel</Button>
+                           </DialogClose>
+                           <Button
+                              disabled={loading}
+                              className='bg-red-600/80 hover:bg-red-600'
+                              type='button'
+                              onClick={deleteBlogAction}
+                           >
+                              {loading && <Spinner />}
+                              Delete
+                           </Button>
+                        </DialogFooter>
+                     </DialogContent>
+                  </Dialog>
+               </CardAction>
+            )}
          </CardHeader>
          <CardContent className='flex flex-col h-full justify-center py-3 bg-blue-50/40 border-t border-b'>
             <div

@@ -45,16 +45,17 @@ export async function updateSession(request: NextRequest) {
    const { data } = await supabase.auth.getClaims()
    const user = data?.claims
 
-   if (request.nextUrl.pathname === '/') {
+   if (!user && request.nextUrl.pathname === '/blogs/mine') {
       const url = request.nextUrl.clone()
-      url.pathname = user ? '/blogs' : '/auth/login'
+      url.pathname = '/blogs'
       return NextResponse.redirect(url)
    }
 
    if (
       !user &&
       !request.nextUrl.pathname.startsWith('/login') &&
-      !request.nextUrl.pathname.startsWith('/auth')
+      !request.nextUrl.pathname.startsWith('/auth') &&
+      !request.nextUrl.pathname.startsWith('/blogs')
    ) {
       // no user, potentially respond by redirecting the user to the login page
       const url = request.nextUrl.clone()
