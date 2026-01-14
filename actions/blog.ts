@@ -44,6 +44,18 @@ interface IUpdateBlog {
 
 export const updateBlog = async (id: string, data: IUpdateBlog) => {
    const supabase = await createClient()
+   const {
+      data: { user }
+   } = await supabase.auth.getUser()
+
+   const { data: blog } = await supabase
+      .from('blogs')
+      .select('*')
+      .eq('id', id)
+      .eq('created_by', user?.id as string)
+      .single()
+
+   if (blog === null) throw new Error('Unauthorized')
 
    const window = new JSDOM('').window
    const DOMPurify = createDOMPurify(window)
@@ -68,6 +80,18 @@ export const updateBlog = async (id: string, data: IUpdateBlog) => {
 
 export const deleteBlog = async (id: string) => {
    const supabase = await createClient()
+   const {
+      data: { user }
+   } = await supabase.auth.getUser()
+
+   const { data: blog } = await supabase
+      .from('blogs')
+      .select('*')
+      .eq('id', id)
+      .eq('created_by', user?.id as string)
+      .single()
+
+   if (blog === null) throw new Error('Unauthorized')
 
    const { error } = await supabase.from('blogs').delete().eq('id', id)
 

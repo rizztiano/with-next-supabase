@@ -66,8 +66,12 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
    const createBlogAction = async () => {
       setLoading(true)
 
-      const create = await createBlog({ ...form.getValues() })
-      toast.info(create.message)
+      try {
+         const create = await createBlog({ ...form.getValues() })
+         toast.info(create.message)
+      } catch (e: unknown) {
+         toast.error((e as Error).message)
+      }
 
       // cleanup
       setOpen(false)
@@ -79,8 +83,12 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
    const updateBlogAction = async () => {
       setLoading(true)
 
-      const update = await updateBlog(blog.id, { ...form.getValues() })
-      toast.info(update.message)
+      try {
+         const update = await updateBlog(blog.id, { ...form.getValues() })
+         toast.info(update.message)
+      } catch (e: unknown) {
+         toast.error((e as Error).message)
+      }
 
       // cleanup
       setOpen(false)

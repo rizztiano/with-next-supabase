@@ -1,10 +1,14 @@
 import BlogCard from '@/components/blog/blog-card'
 import { sbServerIsAuthenticated } from '@/lib/supabase/helpers'
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 
 const BlogList = async ({ mine }: { mine: boolean }) => {
    const supabase = await createClient()
    const authenticated = await sbServerIsAuthenticated()
+   const {
+      data: { user }
+   } = await supabase.auth.getUser()
 
    let query = supabase.from('blogs').select(`
       *,
@@ -17,15 +21,13 @@ const BlogList = async ({ mine }: { mine: boolean }) => {
 
    const { data: blogs } = await query.order('created_at', { ascending: false })
 
-   console.log(blogs)
-
    return (
       <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full'>
          {blogs?.map((blog) => {
             return (
-               <div key={blog.id}>
-                  <BlogCard blog={blog} authenticated={authenticated} />
-               </div>
+               <Link href={`/blogs/${blog.id}`} key={blog.id}>
+                  <BlogCard blog={blog} belongsToAuthUser={blog.created_by === user?.id} />
+               </Link>
             )
          })}
       </div>

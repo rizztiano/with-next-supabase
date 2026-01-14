@@ -26,39 +26,46 @@ interface IBlogCard {
    blog: Database['public']['Tables']['blogs']['Row'] & {
       profile: Database['public']['Tables']['profile']['Row']
    }
-   authenticated: boolean
+   belongsToAuthUser?: boolean
 }
 
-const BlogCard = ({ blog, authenticated }: IBlogCard) => {
+const BlogCard = ({ blog, belongsToAuthUser }: IBlogCard) => {
    const [loading, setLoading] = useState<boolean>(false)
    const [openDelete, setOpenDelete] = useState<boolean>(false)
 
    const deleteBlogAction = async () => {
       setLoading(true)
 
-      const del = await deleteBlog(blog.id)
+      try {
+         const del = await deleteBlog(blog.id)
+         toast.info(del.message)
+      } catch (e: unknown) {
+         toast.error((e as Error).message)
+      }
 
-      toast.info(del.message)
       setOpenDelete(false)
-
       setLoading(false)
    }
 
    return (
       <Card className='overflow-auto cursor-pointer gap-2 h-full'>
          <CardHeader>
-            <CardTitle className='flex flex-col'>
+            <CardTitle className='flex flex-col gap-1'>
                <div className='flex justify-start gap-2 [&>*]:shrink-0'>
-                  <div className='text-xs font-semibold text-blue-500'>{blog.profile.name}</div>
-
-                  <Separator orientation='vertical' className='flex-1' />
+                  <div className='text-xs font-medium text-blue-500'>
+                     {blog.profile.name}&nbsp;
+                     <span className='text-blue-500 font-bold'>
+                        {belongsToAuthUser ? '(You)' : ''}
+                     </span>
+                  </div>
+                  <Separator orientation='vertical' className='h-[unset]!' />
                   <div className='text-xs font-normal text-neutral-500'>
                      {format(blog.created_at, 'MMM dd, yyyy')}
                   </div>
                </div>
-               {blog.title}
+               <div>{blog.title}</div>
             </CardTitle>
-            {authenticated && (
+            {belongsToAuthUser !== undefined && belongsToAuthUser && (
                <CardAction className='flex items-center gap-1'>
                   <BlogDialog
                      button={<Edit className='text-green-700/80' size={18} />}
