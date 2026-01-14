@@ -14,13 +14,22 @@ import {
    DialogTitle,
    DialogTrigger
 } from '@/components/ui/dialog'
+import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
+import { Database } from '@/types/supabase'
 import { format } from 'date-fns'
 import { Edit, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-const BlogCard = ({ blog, authenticated }: { blog: any; authenticated: boolean }) => {
+interface IBlogCard {
+   blog: Database['public']['Tables']['blogs']['Row'] & {
+      profile: Database['public']['Tables']['profile']['Row']
+   }
+   authenticated: boolean
+}
+
+const BlogCard = ({ blog, authenticated }: IBlogCard) => {
    const [loading, setLoading] = useState<boolean>(false)
    const [openDelete, setOpenDelete] = useState<boolean>(false)
 
@@ -38,9 +47,14 @@ const BlogCard = ({ blog, authenticated }: { blog: any; authenticated: boolean }
    return (
       <Card className='overflow-auto cursor-pointer gap-2 h-full'>
          <CardHeader>
-            <CardTitle>
-               <div className='text-xs font-normal mb-1.5 text-neutral-500'>
-                  {format(blog.created_at, 'MMM dd, yyyy')}
+            <CardTitle className='flex flex-col'>
+               <div className='flex justify-start gap-2 [&>*]:shrink-0'>
+                  <div className='text-xs font-semibold text-blue-500'>{blog.profile.name}</div>
+
+                  <Separator orientation='vertical' className='flex-1' />
+                  <div className='text-xs font-normal text-neutral-500'>
+                     {format(blog.created_at, 'MMM dd, yyyy')}
+                  </div>
                </div>
                {blog.title}
             </CardTitle>

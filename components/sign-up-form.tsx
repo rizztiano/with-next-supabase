@@ -1,5 +1,6 @@
 'use client'
 
+import { createProfile } from '@/actions/user'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -32,7 +33,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
       }
 
       try {
-         const { error } = await supabase.auth.signUp({
+         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -42,12 +43,18 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                }
             }
          })
+
          if (error) throw error
+
+         await createProfile(data.user)
          router.push('/auth/sign-up-success')
+         /** */
       } catch (error: unknown) {
          setError(error instanceof Error ? error.message : 'An error occurred')
+         /** */
       } finally {
          setIsLoading(false)
+         /** */
       }
    }
 
@@ -55,66 +62,66 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
       <div className={cn('flex flex-col gap-6', className)} {...props}>
          <Card>
             <CardHeader>
-               <CardTitle className="text-2xl">Sign up</CardTitle>
+               <CardTitle className='text-2xl'>Sign up</CardTitle>
                <CardDescription>Create a new account</CardDescription>
             </CardHeader>
             <CardContent>
                <form onSubmit={handleSignUp}>
-                  <div className="flex flex-col gap-6">
-                     <div className="grid gap-2">
-                        <Label htmlFor="name">Name</Label>
+                  <div className='flex flex-col gap-6'>
+                     <div className='grid gap-2'>
+                        <Label htmlFor='name'>Name</Label>
                         <Input
-                           id="name"
-                           type="text"
-                           placeholder="Mr. Beast"
+                           id='name'
+                           type='text'
+                           placeholder='Mr. Beast'
                            required
                            value={name}
                            onChange={(e) => setName(e.target.value)}
                         />
                      </div>
-                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email</Label>
+                     <div className='grid gap-2'>
+                        <Label htmlFor='email'>Email</Label>
                         <Input
-                           id="email"
-                           type="email"
-                           placeholder="m@example.com"
+                           id='email'
+                           type='email'
+                           placeholder='m@example.com'
                            required
                            value={email}
                            onChange={(e) => setEmail(e.target.value)}
                         />
                      </div>
-                     <div className="grid gap-2">
-                        <div className="flex items-center">
-                           <Label htmlFor="password">Password</Label>
+                     <div className='grid gap-2'>
+                        <div className='flex items-center'>
+                           <Label htmlFor='password'>Password</Label>
                         </div>
                         <Input
-                           id="password"
-                           type="password"
+                           id='password'
+                           type='password'
                            required
                            value={password}
                            onChange={(e) => setPassword(e.target.value)}
                         />
                      </div>
-                     <div className="grid gap-2">
-                        <div className="flex items-center">
-                           <Label htmlFor="repeat-password">Repeat Password</Label>
+                     <div className='grid gap-2'>
+                        <div className='flex items-center'>
+                           <Label htmlFor='repeat-password'>Repeat Password</Label>
                         </div>
                         <Input
-                           id="repeat-password"
-                           type="password"
+                           id='repeat-password'
+                           type='password'
                            required
                            value={repeatPassword}
                            onChange={(e) => setRepeatPassword(e.target.value)}
                         />
                      </div>
-                     {error && <p className="text-sm text-red-500">{error}</p>}
-                     <Button type="submit" className="w-full" disabled={isLoading}>
+                     {error && <p className='text-sm text-red-500'>{error}</p>}
+                     <Button type='submit' className='w-full' disabled={isLoading}>
                         {isLoading ? 'Creating an account...' : 'Sign up'}
                      </Button>
                   </div>
-                  <div className="mt-4 text-center text-sm">
+                  <div className='mt-4 text-center text-sm'>
                      Already have an account?{' '}
-                     <Link href="/auth/login" className="underline underline-offset-4">
+                     <Link href='/auth/login' className='underline underline-offset-4'>
                         Login
                      </Link>
                   </div>

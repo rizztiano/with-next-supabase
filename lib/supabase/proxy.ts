@@ -47,7 +47,7 @@ export async function updateSession(request: NextRequest) {
 
    if (!user && request.nextUrl.pathname === '/blogs/mine') {
       const url = request.nextUrl.clone()
-      url.pathname = '/blogs'
+      url.pathname = '/auth/login'
       return NextResponse.redirect(url)
    }
 
@@ -55,13 +55,23 @@ export async function updateSession(request: NextRequest) {
       !user &&
       !request.nextUrl.pathname.startsWith('/login') &&
       !request.nextUrl.pathname.startsWith('/auth') &&
-      !request.nextUrl.pathname.startsWith('/blogs')
+      !request.nextUrl.pathname.startsWith('/blogs') &&
+      request.nextUrl.pathname !== '/'
    ) {
       // no user, potentially respond by redirecting the user to the login page
       const url = request.nextUrl.clone()
       url.pathname = '/auth/login'
       return NextResponse.redirect(url)
    }
+
+   if (request.nextUrl.pathname === '/') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/blogs'
+      return NextResponse.redirect(url)
+   }
+
+   const url = new URL(request.url)
+   supabaseResponse.headers.set('x-path', url.pathname)
 
    // IMPORTANT: You *must* return the supabaseResponse object as it is.
    // If you're creating a new response object with NextResponse.next() make sure to:

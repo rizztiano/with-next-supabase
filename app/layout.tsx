@@ -1,4 +1,5 @@
 import { Toaster } from '@/components/ui/sonner'
+import ReduxAppProvider from '@/redux/provider'
 import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
 import { Geist } from 'next/font/google'
@@ -28,27 +29,29 @@ export default function RootLayout({
    return (
       <html lang='en' suppressHydrationWarning>
          <body className={`${geistSans.className} antialiased`}>
-            <ThemeProvider
-               attribute='class'
-               defaultTheme='light'
-               enableSystem
-               disableTransitionOnChange
-            >
-               <Toaster
-                  position='top-center'
-                  toastOptions={{
-                     classNames: {
-                        success:
-                           '!border-green-200 !bg-green-50 !text-green-800 [&_svg]:!text-green-600 [&>*>svg]:!text-green-600',
-                        error: '!border-red-200 !bg-red-50 !text-red-800 [&_svg]:!text-red-500 [&>*>svg]:!text-red-500',
-                        warning:
-                           '!border-orange-400 !bg-orange-50 !text-orange-500 [&_svg]:!text-orange-500 [&>*>svg]:!text-orange-500',
-                        info: '!border-blue-200 !bg-blue-50 !text-blue-800 [&_svg]:!text-blue-500 [&>*>svg]:!text-blue-500'
-                     }
-                  }}
-               />
-               {children}
-            </ThemeProvider>
+            <ReduxAppProvider>
+               <ThemeProvider
+                  attribute='class'
+                  defaultTheme='light'
+                  enableSystem
+                  disableTransitionOnChange
+               >
+                  <Toaster
+                     position='top-center'
+                     toastOptions={{
+                        classNames: {
+                           success:
+                              '!border-green-200 !bg-green-50 !text-green-800 [&_svg]:!text-green-600 [&>*>svg]:!text-green-600',
+                           error: '!border-red-200 !bg-red-50 !text-red-800 [&_svg]:!text-red-500 [&>*>svg]:!text-red-500',
+                           warning:
+                              '!border-orange-400 !bg-orange-50 !text-orange-500 [&_svg]:!text-orange-500 [&>*>svg]:!text-orange-500',
+                           info: '!border-blue-200 !bg-blue-50 !text-blue-800 [&_svg]:!text-blue-500 [&>*>svg]:!text-blue-500'
+                        }
+                     }}
+                  />
+                  {children}
+               </ThemeProvider>
+            </ReduxAppProvider>
          </body>
       </html>
    )

@@ -13,6 +13,11 @@ interface ICreateBlog {
 
 export const createBlog = async (data: ICreateBlog) => {
    const supabase = await createClient()
+   const user = await supabase
+      .from('profile')
+      .select('*')
+      .eq('id', (await supabase.auth.getUser()).data.user?.id as string)
+      .single()
 
    const window = new JSDOM('').window
    const DOMPurify = createDOMPurify(window)
@@ -20,7 +25,7 @@ export const createBlog = async (data: ICreateBlog) => {
    const { error } = await supabase.from('blogs').insert({
       title: data.title,
       content: DOMPurify.sanitize(data.content),
-      created_by: (await supabase.auth.getUser()).data.user?.id
+      created_by: user.data?.id as string
    })
 
    if (error) throw new Error(error.message)
