@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { Suspense } from 'react'
 
-const Page = async ({ searchParams }: IBlogPageProps) => {
+const Page = ({ searchParams }: IBlogPageProps) => {
    return (
       <div className='flex-1 w-full flex flex-col gap-8'>
          <div className='flex'>
@@ -21,7 +21,7 @@ const Page = async ({ searchParams }: IBlogPageProps) => {
                   </div>
                }
             >
-               <BlogList mine searchParams={await searchParams} />
+               <BlogList mine searchParams={searchParams} />
             </Suspense>
          </div>
       </div>

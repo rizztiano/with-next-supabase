@@ -35,7 +35,7 @@ const BlogList = async ({
    }
 
    const perPage = 9
-   const page = parseInt(searchParams.page) || 1
+   const page = parseInt((await searchParams).page) || 1
 
    const start = (page - 1) * perPage
    const end = page * perPage - 1

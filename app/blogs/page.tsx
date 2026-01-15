@@ -1,15 +1,12 @@
 import BlogList from '@/components/blog/blog-list'
 import { Spinner } from '@/components/ui/spinner'
-import { sbServerIsAuthenticated } from '@/lib/supabase/helpers'
 import { Suspense } from 'react'
 
 export interface IBlogPageProps {
-   searchParams: { page: string }
+   searchParams: Promise<{ page: string }>
 }
 
-const Page = async ({ searchParams }: IBlogPageProps) => {
-   const authenticated = await sbServerIsAuthenticated()
-
+const Page = ({ searchParams }: IBlogPageProps) => {
    return (
       <div className='flex-1 w-full flex flex-col'>
          <div className='flex'></div>
@@ -21,7 +18,7 @@ const Page = async ({ searchParams }: IBlogPageProps) => {
                   </div>
                }
             >
-               <BlogList mine={false} searchParams={await searchParams} />
+               <BlogList mine={false} searchParams={searchParams} />
             </Suspense>
          </div>
       </div>

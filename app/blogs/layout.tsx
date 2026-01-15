@@ -14,7 +14,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <div className='flex gap-3 items-center font-semibold'>
                      <Link href={'/blogs'}>Home</Link>
                      <Separator orientation='vertical' className='self-stretch !h-[unset]' />
-                     <Link className='font-medium text-green-700' href={'/blogs/mine'}>
+                     <Link
+                        className='font-medium text-green-700'
+                        href={'/blogs/mine'}
+                        prefetch={false}
+                     >
                         My Blogs
                      </Link>
                      {/* <ThemeSwitcher /> */}
