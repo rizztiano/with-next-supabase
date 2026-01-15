@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                <div className='w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm'>
                   <div className='flex gap-3 items-center font-semibold'>
                      <Link href={'/blogs'}>Home</Link>
-                     <Separator orientation='vertical' className='self-stretch !h-[unset]' />
+                     <Separator orientation='vertical' className='self-stretch h-[unset]!' />
                      <Link
                         className='font-medium text-green-700'
                         href={'/blogs/mine'}

@@ -63,7 +63,7 @@ const BlogList = async ({
       <div className='flex flex-col w-full gap-16'>
          {(blogs?.length as number) > 0 ? (
             <>
-               <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full'>
+               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full'>
                   {blogs?.map((blog) => {
                      return (
                         <div key={blog.id}>
