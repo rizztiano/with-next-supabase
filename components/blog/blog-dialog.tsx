@@ -35,8 +35,15 @@ interface IBlogDialog {
    blog?: any
 }
 
+const MAX_SIZE = 10 * 1024 * 1024
+
 const schema = z.object({
    title: z.string().min(1, 'Title is required.'),
+   image: z
+      .instanceof(File)
+      .refine((file) => file.size <= MAX_SIZE, 'File size must be 3MB or smaller')
+      .refine((file) => /^image\/.+/.test(file.type), 'Only image files allowed')
+      .optional(),
    content: z.string().min(1, 'Content is required.')
 })
 
@@ -45,11 +52,13 @@ type formSchema = z.infer<typeof schema>
 const BlogDialog = ({ button, blog }: IBlogDialog) => {
    const [loading, setLoading] = useState<boolean>(false)
    const [open, setOpen] = useState<boolean>(false)
+   const [imageName, setImageName] = useState<string>('')
 
    const form = useForm<formSchema>({
       resolver: zodResolver(schema),
       defaultValues: {
          title: '',
+         image: undefined,
          content: ''
       },
       mode: 'onSubmit'
@@ -138,6 +147,30 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
                                  type='text'
                                  placeholder='Beatiful blog'
                                  {...field}
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  <FormField
+                     control={form.control}
+                     name={'image'}
+                     render={({ field: { onChange, ...fieldProps } }) => (
+                        <FormItem className='grid gap-2'>
+                           <FormLabel>Image</FormLabel>
+                           <FormControl>
+                              <Input
+                                 {...fieldProps}
+                                 id='image'
+                                 type='file'
+                                 accept='image/*'
+                                 value={undefined}
+                                 className='file:text-blue-500 file:text-sm file:font-medium text-sm align-middle pt-1.5'
+                                 onChange={async (e) => {
+                                    const files = e.target.files
+                                    onChange(files && files[0])
+                                 }}
                               />
                            </FormControl>
                            <FormMessage />
