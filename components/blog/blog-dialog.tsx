@@ -99,7 +99,7 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
 
    return (
       <Dialog open={open} onOpenChange={setOpen}>
-         <DialogTrigger asChild>{button}</DialogTrigger>
+         <DialogTrigger>{button}</DialogTrigger>
          <DialogContent onInteractOutside={(e) => e.preventDefault()} className='sm:max-w-150'>
             <Form {...form}>
                <form

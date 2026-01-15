@@ -19,6 +19,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { Database } from '@/types/supabase'
 import { format } from 'date-fns'
 import { Edit, Trash } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -63,7 +64,7 @@ const BlogCard = ({ blog, belongsToAuthUser }: IBlogCard) => {
                      {format(blog.created_at, 'MMM dd, yyyy')}
                   </div>
                </div>
-               <div>{blog.title}</div>
+               <Link href={`/blogs/${blog.id}`}>{blog.title}</Link>
             </CardTitle>
             {belongsToAuthUser !== undefined && belongsToAuthUser && (
                <CardAction className='flex items-center gap-1'>
