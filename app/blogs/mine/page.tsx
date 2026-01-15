@@ -1,10 +1,11 @@
+import { IBlogPageProps } from '@/app/blogs/page'
 import BlogDialog from '@/components/blog/blog-dialog'
 import BlogList from '@/components/blog/blog-list'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { Suspense } from 'react'
 
-const Page = async () => {
+const Page = async ({ searchParams }: IBlogPageProps) => {
    return (
       <div className='flex-1 w-full flex flex-col gap-8'>
          <div className='flex'>
@@ -20,7 +21,7 @@ const Page = async () => {
                   </div>
                }
             >
-               <BlogList mine />
+               <BlogList mine searchParams={await searchParams} />
             </Suspense>
          </div>
       </div>

@@ -49,7 +49,7 @@ const BlogCard = ({ blog, belongsToAuthUser }: IBlogCard) => {
    }
 
    return (
-      <Card className='overflow-auto cursor-pointer gap-2 h-full'>
+      <Card className='overflow-auto gap-2 h-full'>
          <CardHeader>
             <CardTitle className='flex flex-col gap-1'>
                <div className='flex justify-start gap-2 [&>*]:shrink-0'>

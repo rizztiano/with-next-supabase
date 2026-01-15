@@ -3,7 +3,11 @@ import { Spinner } from '@/components/ui/spinner'
 import { sbServerIsAuthenticated } from '@/lib/supabase/helpers'
 import { Suspense } from 'react'
 
-const Page = async () => {
+export interface IBlogPageProps {
+   searchParams: { page: string }
+}
+
+const Page = async ({ searchParams }: IBlogPageProps) => {
    const authenticated = await sbServerIsAuthenticated()
 
    return (
@@ -17,7 +21,7 @@ const Page = async () => {
                   </div>
                }
             >
-               <BlogList mine={false} />
+               <BlogList mine={false} searchParams={await searchParams} />
             </Suspense>
          </div>
       </div>

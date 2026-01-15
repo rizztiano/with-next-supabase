@@ -24,7 +24,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -97,9 +97,13 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
       setLoading(false)
    }
 
+   function isButtonComponent(node: React.ReactNode): boolean {
+      return React.isValidElement(node) && node.type === 'button'
+   }
+
    return (
       <Dialog open={open} onOpenChange={setOpen}>
-         <DialogTrigger>{button}</DialogTrigger>
+         <DialogTrigger asChild={isButtonComponent(button)}>{button}</DialogTrigger>
          <DialogContent onInteractOutside={(e) => e.preventDefault()} className='sm:max-w-150'>
             <Form {...form}>
                <form
