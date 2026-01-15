@@ -3,8 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-import createDOMPurify from 'dompurify'
-import { JSDOM } from 'jsdom'
+import DOMPurify from 'isomorphic-dompurify'
 
 interface ICreateBlog {
    title: string
@@ -19,16 +18,15 @@ export const createBlog = async (data: ICreateBlog) => {
       .eq('id', (await supabase.auth.getUser()).data.user?.id as string)
       .single()
 
-   const window = new JSDOM('').window
-   const DOMPurify = createDOMPurify(window)
-
    const { error } = await supabase.from('blogs').insert({
       title: data.title,
       content: DOMPurify.sanitize(data.content),
       created_by: user.data?.id as string
    })
 
-   if (error) throw new Error(error.message)
+   if (error) {
+      throw new Error(error.message)
+   }
 
    revalidatePath('/blogs')
 
@@ -55,10 +53,9 @@ export const updateBlog = async (id: string, data: IUpdateBlog) => {
       .eq('created_by', user?.id as string)
       .single()
 
-   if (blog === null) throw new Error('Unauthorized')
-
-   const window = new JSDOM('').window
-   const DOMPurify = createDOMPurify(window)
+   if (blog === null) {
+      throw new Error('Unauthorized')
+   }
 
    const { error } = await supabase
       .from('blogs')
@@ -91,7 +88,9 @@ export const deleteBlog = async (id: string) => {
       .eq('created_by', user?.id as string)
       .single()
 
-   if (blog === null) throw new Error('Unauthorized')
+   if (blog === null) {
+      throw new Error('Unauthorized')
+   }
 
    const { error } = await supabase.from('blogs').delete().eq('id', id)
 
