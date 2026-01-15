@@ -24,6 +24,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { zodResolver } from '@hookform/resolvers/zod'
+import DOMPurify from 'dompurify'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -67,7 +68,10 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
       setLoading(true)
 
       try {
-         const create = await createBlog({ ...form.getValues() })
+         const create = await createBlog({
+            title: form.getValues('title'),
+            content: DOMPurify.sanitize(form.getValues('content'))
+         })
          toast.info(create.message)
       } catch (e: unknown) {
          toast.error((e as Error).message)
@@ -84,7 +88,11 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
       setLoading(true)
 
       try {
-         const update = await updateBlog(blog.id, { ...form.getValues() })
+         const update = await updateBlog(blog.id, {
+            title: form.getValues('title'),
+            content: DOMPurify.sanitize(form.getValues('content'))
+         })
+
          toast.info(update.message)
       } catch (e: unknown) {
          toast.error((e as Error).message)

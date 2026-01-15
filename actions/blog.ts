@@ -9,8 +9,6 @@ interface ICreateBlog {
 }
 
 export const createBlog = async (data: ICreateBlog) => {
-   const { default: DOMPurify } = await import('isomorphic-dompurify')
-
    const supabase = await createClient()
    const user = await supabase
       .from('profile')
@@ -20,7 +18,7 @@ export const createBlog = async (data: ICreateBlog) => {
 
    const { error } = await supabase.from('blogs').insert({
       title: data.title,
-      content: DOMPurify.sanitize(data.content),
+      content: data.content,
       created_by: user.data?.id as string
    })
 
@@ -41,8 +39,6 @@ interface IUpdateBlog {
 }
 
 export const updateBlog = async (id: string, data: IUpdateBlog) => {
-   const { default: DOMPurify } = await import('isomorphic-dompurify')
-
    const supabase = await createClient()
    const {
       data: { user }
@@ -63,7 +59,7 @@ export const updateBlog = async (id: string, data: IUpdateBlog) => {
       .from('blogs')
       .update({
          title: data.title,
-         content: data.content === undefined ? undefined : DOMPurify.sanitize(data.content)
+         content: data.content
       })
       .eq('id', id)
 
