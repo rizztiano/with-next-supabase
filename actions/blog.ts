@@ -9,7 +9,7 @@ interface ICreateBlog {
 }
 
 export const createBlog = async (data: ICreateBlog) => {
-   const DOMPurify = (await import('isomorphic-dompurify')).default
+   const { default: DOMPurify } = await import('isomorphic-dompurify')
 
    const supabase = await createClient()
    const user = await supabase
@@ -41,7 +41,7 @@ interface IUpdateBlog {
 }
 
 export const updateBlog = async (id: string, data: IUpdateBlog) => {
-   const DOMPurify = (await import('isomorphic-dompurify')).default
+   const { default: DOMPurify } = await import('isomorphic-dompurify')
 
    const supabase = await createClient()
    const {

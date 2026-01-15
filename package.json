@@ -63,6 +63,7 @@
    },
    "overrides": {
       "html-encoding-sniffer": "^4.0.0",
-      "@exodus/bytes": "^1.0.0"
+      "@exodus/bytes": "^1.0.0",
+      "parse5": "7.1.2"
    }
 }
