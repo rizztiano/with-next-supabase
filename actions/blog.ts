@@ -3,14 +3,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-const DOMPurify = (await import('isomorphic-dompurify')).default
-
 interface ICreateBlog {
    title: string
    content: string
 }
 
 export const createBlog = async (data: ICreateBlog) => {
+   const DOMPurify = (await import('isomorphic-dompurify')).default
+
    const supabase = await createClient()
    const user = await supabase
       .from('profile')
@@ -41,6 +41,8 @@ interface IUpdateBlog {
 }
 
 export const updateBlog = async (id: string, data: IUpdateBlog) => {
+   const DOMPurify = (await import('isomorphic-dompurify')).default
+
    const supabase = await createClient()
    const {
       data: { user }
