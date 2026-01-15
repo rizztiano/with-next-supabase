@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-import DOMPurify from 'isomorphic-dompurify'
+const DOMPurify = (await import('isomorphic-dompurify')).default
 
 interface ICreateBlog {
    title: string
