@@ -3,9 +3,11 @@ import BlogDialog from '@/components/blog/blog-dialog'
 import BlogList from '@/components/blog/blog-list'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
-import { Suspense } from 'react'
+import { Suspense, use } from 'react'
 
 const Page = ({ searchParams }: IBlogPageProps) => {
+   const key = use(searchParams).page
+
    return (
       <div className='flex-1 w-full flex flex-col gap-8'>
          <div className='flex'>
@@ -15,6 +17,7 @@ const Page = ({ searchParams }: IBlogPageProps) => {
          </div>
          <div className='flex'>
             <Suspense
+               key={key}
                fallback={
                   <div className='flex gap-2 items-center'>
                      <Spinner /> <span>Getting blogs</span>
