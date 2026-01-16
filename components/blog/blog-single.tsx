@@ -1,6 +1,8 @@
+import { IBlogCard } from '@/components/blog/blog-card'
 import { Separator } from '@/components/ui/separator'
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
+import Image from 'next/image'
 
 const BlogSingle = async ({ slug }: { slug: string }) => {
    const supabase = await createClient()
@@ -8,14 +10,22 @@ const BlogSingle = async ({ slug }: { slug: string }) => {
       data: { user }
    } = await supabase.auth.getUser()
 
-   const { data: blog } = await supabase
-      .from('blogs')
-      .select('*, profile (*)')
-      .eq('id', slug)
-      .single()
+   const { data } = await supabase.from('blogs').select('*, profile (*)').eq('id', slug).single()
+   const blog = data as IBlogCard['blog']
 
    if (!blog) {
       return <h1 className='text-red-800'>Blog not found!</h1>
+   }
+
+   if (blog.image) {
+      const file = supabase.storage.from('blog-feature')
+      const { data: exists } = await file.exists(blog.image)
+
+      if (exists) {
+         blog.imageUrl = (
+            await supabase.storage.from('blog-feature').createSignedUrl(blog.image, 86400)
+         ).data?.signedUrl
+      }
    }
 
    const belongsToAuthUser = blog.created_by === user?.id
@@ -37,6 +47,17 @@ const BlogSingle = async ({ slug }: { slug: string }) => {
             </div>
             <h1 className='text-xl font-semibold'>{blog.title}</h1>
          </div>
+         {blog.imageUrl && (
+            <div className='relative h-80 w-full shadow-lg shrink-0 rounded-lg overflow-hidden'>
+               <Image
+                  objectFit='cover'
+                  fill
+                  alt={`${blog?.id} - ${blog?.title}`}
+                  src={blog.imageUrl}
+                  unoptimized
+               />
+            </div>
+         )}
          <div className='prose' dangerouslySetInnerHTML={{ __html: blog.content }}></div>
       </div>
    )

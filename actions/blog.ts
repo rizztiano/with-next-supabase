@@ -1,29 +1,50 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { TypedFormData } from '@/types/forms'
 import { revalidatePath } from 'next/cache'
+import { v4 } from 'uuid'
 
-interface ICreateBlog {
+type createFormData = TypedFormData<{
    title: string
    content: string
-}
+   image?: File
+}>
 
-export const createBlog = async (data: ICreateBlog) => {
+export const createBlog = async (formData: createFormData) => {
    const supabase = await createClient()
+
    const user = await supabase
       .from('profile')
       .select('*')
       .eq('id', (await supabase.auth.getUser()).data.user?.id as string)
       .single()
 
+   const image = formData.get('image') as File
+   var filename = image ? `${v4()}.${image.name.split('.').pop()}` : undefined
+
    const { error } = await supabase.from('blogs').insert({
-      title: data.title,
-      content: data.content,
-      created_by: user.data?.id as string
+      title: formData.get('title') as string,
+      content: formData.get('content') as string,
+      image: filename,
+      created_by: user.data?.id as string,
+      updated_at: new Date().toISOString()
    })
 
    if (error) {
       throw new Error(error.message)
+   }
+
+   if (filename) {
+      const { error } = await supabase.storage.from('blog-feature').upload(filename, image, {
+         cacheControl: 'no-cache',
+         upsert: true,
+         contentType: image.type
+      })
+
+      if (error) {
+         throw new Error(error.message)
+      }
    }
 
    revalidatePath('/blogs')
@@ -33,13 +54,15 @@ export const createBlog = async (data: ICreateBlog) => {
    }
 }
 
-interface IUpdateBlog {
+type updateFormData = TypedFormData<{
    title?: string
    content?: string
-}
+   image?: File | null
+}>
 
-export const updateBlog = async (id: string, data: IUpdateBlog) => {
+export const updateBlog = async (id: string, formData: updateFormData) => {
    const supabase = await createClient()
+
    const {
       data: { user }
    } = await supabase.auth.getUser()
@@ -55,15 +78,45 @@ export const updateBlog = async (id: string, data: IUpdateBlog) => {
       throw new Error('Unauthorized')
    }
 
+   const image = formData.get('image') as File
+   var filename = image ? blog.image || `${v4()}.${image.name.split('.').pop()}` : image
+
    const { error } = await supabase
       .from('blogs')
       .update({
-         title: data.title,
-         content: data.content
+         title: formData.get('title') as string,
+         content: formData.get('content') as string,
+         image: filename,
+         updated_at: new Date().toISOString()
       })
       .eq('id', id)
 
    if (error) throw new Error(error.message)
+
+   if (filename) {
+      const { error } = await supabase.storage.from('blog-feature').upload(filename, image, {
+         cacheControl: 'no-cache',
+         upsert: true,
+         contentType: image.type
+      })
+
+      if (error) {
+         throw new Error(error.message)
+      }
+   }
+
+   if (formData.get('image') === null && blog.image) {
+      const file = supabase.storage.from('blog-feature')
+      const { data: exists } = await file.exists(blog.image as string)
+
+      if (exists) {
+         const { error } = await file.remove([blog.image as string])
+
+         if (error) {
+            throw new Error(error.message)
+         }
+      }
+   }
 
    revalidatePath('/blogs')
    revalidatePath(`/blogs/${id}`)

@@ -1,5 +1,5 @@
 import { IBlogPageProps } from '@/app/blogs/page'
-import BlogCard from '@/components/blog/blog-card'
+import BlogCard, { IBlogCard } from '@/components/blog/blog-card'
 import {
    Pagination,
    PaginationContent,
@@ -30,8 +30,15 @@ const BlogList = async ({
       profile (*)
    `)
 
+   let countQuery = supabase.from('blogs').select('*', { count: 'exact', head: true })
+
    if (authenticated && mine) {
       query = query.eq('created_by', (await supabase.auth.getUser()).data.user?.id as string)
+
+      countQuery = countQuery.eq(
+         'created_by',
+         (await supabase.auth.getUser()).data.user?.id as string
+      )
    }
 
    const perPage = 9
@@ -40,10 +47,29 @@ const BlogList = async ({
    const start = (page - 1) * perPage
    const end = page * perPage - 1
 
-   const { count } = await supabase.from('blogs').select('*', { count: 'exact', head: true })
+   const { count } = await countQuery
    const totalPages = Math.ceil((count || 0) / perPage)
 
    const { data: blogs } = await query.order('created_at', { ascending: false }).range(start, end)
+
+   const blogsWithImageLink = await Promise.all(
+      (blogs ?? []).map(async (blog) => {
+         const blogNewData: IBlogCard['blog'] = { ...blog }
+
+         if (blog.image) {
+            const file = supabase.storage.from('blog-feature')
+            const { data: exists } = await file.exists(blog.image)
+
+            if (exists) {
+               blogNewData.imageUrl = (
+                  await supabase.storage.from('blog-feature').createSignedUrl(blog.image, 86400)
+               ).data?.signedUrl
+            }
+         }
+
+         return blogNewData
+      })
+   )
 
    const maxPagesPerPage = totalPages >= 4 ? 4 : totalPages
 
@@ -61,10 +87,10 @@ const BlogList = async ({
 
    return (
       <div className='flex flex-col w-full gap-16'>
-         {(blogs?.length as number) > 0 ? (
+         {(blogsWithImageLink?.length as number) > 0 ? (
             <>
                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full'>
-                  {blogs?.map((blog) => {
+                  {blogsWithImageLink?.map((blog) => {
                      return (
                         <div key={blog.id}>
                            <BlogCard blog={blog} belongsToAuthUser={blog.created_by === user?.id} />

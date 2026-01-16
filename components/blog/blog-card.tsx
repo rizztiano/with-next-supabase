@@ -19,13 +19,16 @@ import { Spinner } from '@/components/ui/spinner'
 import { Database } from '@/types/supabase'
 import { format } from 'date-fns'
 import { Edit, Trash } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-interface IBlogCard {
+export interface IBlogCard {
    blog: Database['public']['Tables']['blogs']['Row'] & {
       profile: Database['public']['Tables']['profile']['Row']
+   } & {
+      imageUrl?: string
    }
    belongsToAuthUser?: boolean
 }
@@ -74,7 +77,7 @@ const BlogCard = ({ blog, belongsToAuthUser }: IBlogCard) => {
                   />
                   <Dialog open={openDelete} onOpenChange={setOpenDelete}>
                      <DialogTrigger>
-                        <Trash className='cursor-pointer text-red-600/80' size={18} />
+                        <Trash className='cursor-pointer text-red-700/80' size={18} />
                      </DialogTrigger>
                      <DialogContent>
                         <DialogHeader>
@@ -102,11 +105,24 @@ const BlogCard = ({ blog, belongsToAuthUser }: IBlogCard) => {
                </CardAction>
             )}
          </CardHeader>
-         <CardContent className='flex flex-col h-full justify-center py-3 bg-blue-50/40 border-t border-b'>
-            <div
-               className='line-clamp-6 text-neutral-600 text-sm'
-               dangerouslySetInnerHTML={{ __html: blog.content }}
-            ></div>
+         <CardContent className='flex flex-col p-0 h-full gap-4'>
+            {blog.imageUrl && (
+               <div className='relative h-30 overflow-hidden shadow-lg'>
+                  <Image
+                     className='object-cover'
+                     fill
+                     alt={`${blog?.id} - ${blog?.title}`}
+                     src={blog.imageUrl}
+                     unoptimized
+                  />
+               </div>
+            )}
+            <div className='flex px-6 flex-col flex-1 justify-center py-3 bg-blue-50/40 border-t border-b'>
+               <div
+                  className='line-clamp-6 text-neutral-600 text-sm'
+                  dangerouslySetInnerHTML={{ __html: blog.content }}
+               ></div>
+            </div>
          </CardContent>
       </Card>
    )
