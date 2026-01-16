@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
+import { formNull, formUndefined } from '@/constants/form'
 import { Database } from '@/types/supabase'
 import { zodResolver } from '@hookform/resolvers/zod'
 import DOMPurify from 'dompurify'
@@ -124,7 +125,12 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
       formData.append('content', DOMPurify.sanitize(form.getValues('content')))
 
       const image = form.getValues('image') as File
-      if (image) {
+
+      if (image === undefined) {
+         formData.append('image', formUndefined)
+      } else if (image === null) {
+         formData.append('image', formNull)
+      } else {
          formData.append('image', image)
       }
 

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/pagination'
 import { sbServerIsAuthenticated } from '@/lib/supabase/helpers'
 import { createClient } from '@/lib/supabase/server'
+import { headers } from 'next/headers'
 
 const BlogList = async ({
    mine,
@@ -19,6 +20,9 @@ const BlogList = async ({
    mine: boolean
    searchParams: IBlogPageProps['searchParams']
 }) => {
+   const headersList = await headers()
+   const pathname = headersList.get('x-path')
+
    const supabase = await createClient()
    const authenticated = await sbServerIsAuthenticated()
    const {
@@ -102,7 +106,7 @@ const BlogList = async ({
                   <PaginationContent>
                      <PaginationItem>
                         <PaginationPrevious
-                           href={`/blogs/?page=${page - 1}`}
+                           href={`${pathname}/?page=${page - 1}`}
                            className={page <= 1 ? `pointer-events-none opacity-50` : ``}
                         />
                      </PaginationItem>
@@ -116,7 +120,7 @@ const BlogList = async ({
                            <PaginationItem key={thisPage}>
                               <PaginationLink
                                  isActive={thisPage == page}
-                                 href={`/blogs/?page=${thisPage}`}
+                                 href={`${pathname}/?page=${thisPage}`}
                               >
                                  {thisPage}
                               </PaginationLink>
@@ -130,7 +134,7 @@ const BlogList = async ({
                      )}
                      <PaginationItem>
                         <PaginationNext
-                           href={`/blogs/?page=${page + 1}`}
+                           href={`${pathname}/?page=${page + 1}`}
                            className={page >= totalPages ? `pointer-events-none opacity-50` : ``}
                         />
                      </PaginationItem>

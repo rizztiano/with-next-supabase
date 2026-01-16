@@ -1,14 +1,19 @@
 'use server'
 
+import { formNull, formUndefined } from '@/constants/form'
 import { createClient } from '@/lib/supabase/server'
 import { TypedFormData } from '@/types/forms'
 import { revalidatePath } from 'next/cache'
 import { v4 } from 'uuid'
 
+/**
+ * 0 = undefined
+ * 1 = null
+ */
 type createFormData = TypedFormData<{
    title: string
    content: string
-   image?: File
+   image: File | typeof formUndefined | typeof formNull
 }>
 
 export const createBlog = async (formData: createFormData) => {
@@ -21,7 +26,7 @@ export const createBlog = async (formData: createFormData) => {
       .single()
 
    const image = formData.get('image') as File
-   var filename = image ? `${v4()}.${image.name.split('.').pop()}` : undefined
+   var filename = image instanceof File ? `${v4()}.${image.name.split('.').pop()}` : undefined
 
    const { error } = await supabase.from('blogs').insert({
       title: formData.get('title') as string,
@@ -54,10 +59,14 @@ export const createBlog = async (formData: createFormData) => {
    }
 }
 
+/**
+ * 0 = undefined
+ * 1 = null
+ */
 type updateFormData = TypedFormData<{
    title?: string
    content?: string
-   image?: File | null
+   image: File | '0' | '1'
 }>
 
 export const updateBlog = async (id: string, formData: updateFormData) => {
@@ -79,7 +88,8 @@ export const updateBlog = async (id: string, formData: updateFormData) => {
    }
 
    const image = formData.get('image') as File
-   var filename = image ? blog.image || `${v4()}.${image.name.split('.').pop()}` : image
+   var filename =
+      image instanceof File ? blog.image || `${v4()}.${image.name.split('.').pop()}` : undefined
 
    const { error } = await supabase
       .from('blogs')
@@ -105,7 +115,7 @@ export const updateBlog = async (id: string, formData: updateFormData) => {
       }
    }
 
-   if (formData.get('image') === null && blog.image) {
+   if (formData.get('image') == formNull && blog.image) {
       const file = supabase.storage.from('blog-feature')
       const { data: exists } = await file.exists(blog.image as string)
 
@@ -146,6 +156,19 @@ export const deleteBlog = async (id: string) => {
    const { error } = await supabase.from('blogs').delete().eq('id', id)
 
    if (error) throw new Error(error.message)
+
+   if (blog.image) {
+      const file = supabase.storage.from('blog-feature')
+      const { data: exists } = await file.exists(blog.image as string)
+
+      if (exists) {
+         const { error } = await file.remove([blog.image as string])
+
+         if (error) {
+            throw new Error(error.message)
+         }
+      }
+   }
 
    revalidatePath('/blogs')
 
