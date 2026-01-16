@@ -1,4 +1,5 @@
 import { IBlogCard } from '@/components/blog/blog-card'
+import BlogInteraction from '@/components/blog/blog-interaction'
 import { Separator } from '@/components/ui/separator'
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
@@ -59,6 +60,7 @@ const BlogSingle = async ({ slug }: { slug: string }) => {
             </div>
          )}
          <div className='prose' dangerouslySetInnerHTML={{ __html: blog.content }}></div>
+         <BlogInteraction />
       </div>
    )
 }
