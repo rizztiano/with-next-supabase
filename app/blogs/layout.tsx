@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                </div>
             </nav>
             <div className='w-full flex justify-center'>
-               <div className='flex-1 flex flex-col gap-10 max-w-5xl p-5 pb-20'>
+               <div className='flex-1 flex flex-col gap-10 max-w-5xl w-full p-5 pb-20'>
                   <Suspense>{children}</Suspense>
                </div>
             </div>
