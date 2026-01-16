@@ -1,6 +1,7 @@
 import { IBlogCard } from '@/components/blog/blog-card'
 import BlogInteraction from '@/components/blog/blog-interaction'
 import { Separator } from '@/components/ui/separator'
+import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
 import Image from 'next/image'
@@ -46,10 +47,10 @@ const BlogSingle = async ({ slug }: { slug: string }) => {
                   {format(blog.created_at, 'MMM dd, yyyy')}
                </div>
             </div>
-            <h1 className='text-xl font-semibold'>{blog.title}</h1>
+            <h1 className='text-2xl font-semibold'>{blog.title}</h1>
          </div>
          {blog.imageUrl && (
-            <div className='relative h-80 w-full shadow-lg shrink-0 rounded-lg overflow-hidden'>
+            <ImageZoom className='relative h-80 w-full shadow-lg shrink-0 rounded-lg overflow-hidden'>
                <Image
                   objectFit='cover'
                   fill
@@ -57,9 +58,10 @@ const BlogSingle = async ({ slug }: { slug: string }) => {
                   src={blog.imageUrl}
                   unoptimized
                />
-            </div>
+            </ImageZoom>
          )}
          <div className='prose' dangerouslySetInnerHTML={{ __html: blog.content }}></div>
+         <Separator />
          <BlogInteraction />
       </div>
    )

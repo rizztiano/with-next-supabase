@@ -22,6 +22,7 @@ import {
    FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 import { Spinner } from '@/components/ui/spinner'
 import { formNull, formUndefined } from '@/constants/form'
 import { Database } from '@/types/supabase'
@@ -229,7 +230,7 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
                         )}
                      />
                      {imageUrl && (
-                        <div className='relative h-52 rounded-md overflow-hidden shrink-0'>
+                        <ImageZoom className='relative h-52 rounded-md overflow-hidden shrink-0'>
                            <Image
                               className='object-cover'
                               fill
@@ -237,7 +238,7 @@ const BlogDialog = ({ button, blog }: IBlogDialog) => {
                               src={imageUrl}
                               unoptimized
                            />
-                        </div>
+                        </ImageZoom>
                      )}
                      <FormField
                         control={form.control}

@@ -15,6 +15,7 @@ import {
    DialogTrigger
 } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
+import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 import { Spinner } from '@/components/ui/spinner'
 import { Database } from '@/types/supabase'
 import { format } from 'date-fns'
@@ -107,7 +108,7 @@ const BlogCard = ({ blog, belongsToAuthUser }: IBlogCard) => {
          </CardHeader>
          <CardContent className='flex flex-col p-0 h-full gap-4'>
             {blog.imageUrl && (
-               <div className='relative h-30 overflow-hidden shadow-lg'>
+               <ImageZoom className='relative h-30 overflow-hidden shadow-lg'>
                   <Image
                      className='object-cover'
                      fill
@@ -115,7 +116,7 @@ const BlogCard = ({ blog, belongsToAuthUser }: IBlogCard) => {
                      src={blog.imageUrl}
                      unoptimized
                   />
-               </div>
+               </ImageZoom>
             )}
             <div className='flex px-6 flex-col flex-1 justify-center py-3 bg-blue-50/40 border-t border-b'>
                <div
