@@ -1,5 +1,5 @@
 import { IBlogCard } from '@/components/blog/blog-card'
-import BlogInteraction from '@/components/blog/blog-interaction'
+import BlogInteraction from '@/components/blog/interaction/blog-interaction'
 import { Separator } from '@/components/ui/separator'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 import { createClient } from '@/lib/supabase/server'
