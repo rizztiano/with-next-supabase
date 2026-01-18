@@ -26,7 +26,7 @@ export const createBlog = async (formData: createFormData) => {
       .single()
 
    const image = formData.get('image') as File
-   var filename = image instanceof File ? `${v4()}.${image.name.split('.').pop()}` : undefined
+   const filename = image instanceof File ? `${v4()}.${image.name.split('.').pop()}` : undefined
 
    const { error } = await supabase.from('blogs').insert({
       title: formData.get('title') as string,
@@ -88,7 +88,7 @@ export const updateBlog = async (id: string, formData: updateFormData) => {
    }
 
    const image = formData.get('image') as File
-   var filename =
+   const filename =
       image instanceof File ? blog.image || `${v4()}.${image.name.split('.').pop()}` : undefined
 
    const { error } = await supabase

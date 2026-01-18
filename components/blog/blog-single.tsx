@@ -1,7 +1,8 @@
 import { IBlogCard } from '@/components/blog/blog-card'
-import BlogInteraction from '@/components/blog/interaction/blog-interaction'
+import BlogInteractionList from '@/components/blog/interaction/blog-interaction-list'
 import { Separator } from '@/components/ui/separator'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
+import BlogSingleContextProvider from '@/contexts/blog-single-context'
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
 import Image from 'next/image'
@@ -33,37 +34,39 @@ const BlogSingle = async ({ slug }: { slug: string }) => {
    const belongsToAuthUser = blog.created_by === user?.id
 
    return (
-      <div className='flex flex-col gap-10 items-center'>
-         <div className='flex flex-col justify-center items-center w-full gap-1'>
-            <div className='flex justify-start gap-2 [&>*]:shrink-0'>
-               <div className='text-xs font-medium text-blue-500'>
-                  {blog.profile.name}&nbsp;
-                  <span className='text-blue-500 font-bold'>
-                     {belongsToAuthUser ? '(You)' : ''}
-                  </span>
+      <BlogSingleContextProvider id={slug}>
+         <div className='flex flex-col gap-10 items-center'>
+            <div className='flex flex-col justify-center items-center w-full gap-1'>
+               <div className='flex justify-start gap-2 [&>*]:shrink-0'>
+                  <div className='text-xs font-medium text-blue-500'>
+                     {blog.profile.name}&nbsp;
+                     <span className='text-blue-500 font-bold'>
+                        {belongsToAuthUser ? '(You)' : ''}
+                     </span>
+                  </div>
+                  <Separator orientation='vertical' className='h-[unset]!' />
+                  <div className='text-xs font-normal text-neutral-500'>
+                     {format(blog.created_at, 'MMM dd, yyyy')}
+                  </div>
                </div>
-               <Separator orientation='vertical' className='h-[unset]!' />
-               <div className='text-xs font-normal text-neutral-500'>
-                  {format(blog.created_at, 'MMM dd, yyyy')}
-               </div>
+               <h1 className='text-2xl font-semibold'>{blog.title}</h1>
             </div>
-            <h1 className='text-2xl font-semibold'>{blog.title}</h1>
+            {blog.imageUrl && (
+               <ImageZoom className='relative h-80 w-full shadow-lg shrink-0 rounded-lg overflow-hidden'>
+                  <Image
+                     objectFit='cover'
+                     fill
+                     alt={`${blog?.id} - ${blog?.title}`}
+                     src={blog.imageUrl}
+                     unoptimized
+                  />
+               </ImageZoom>
+            )}
+            <div className='prose' dangerouslySetInnerHTML={{ __html: blog.content }}></div>
+            <Separator />
+            <BlogInteractionList id={slug} />
          </div>
-         {blog.imageUrl && (
-            <ImageZoom className='relative h-80 w-full shadow-lg shrink-0 rounded-lg overflow-hidden'>
-               <Image
-                  objectFit='cover'
-                  fill
-                  alt={`${blog?.id} - ${blog?.title}`}
-                  src={blog.imageUrl}
-                  unoptimized
-               />
-            </ImageZoom>
-         )}
-         <div className='prose' dangerouslySetInnerHTML={{ __html: blog.content }}></div>
-         <Separator />
-         <BlogInteraction />
-      </div>
+      </BlogSingleContextProvider>
    )
 }
 
