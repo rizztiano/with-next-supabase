@@ -10,13 +10,13 @@ import { v4 } from 'uuid'
  * 0 = undefined
  * 1 = null
  */
-type createFormData = TypedFormData<{
+type TCreateFormData = TypedFormData<{
    title: string
    content: string
    image: File | typeof formUndefined | typeof formNull
 }>
 
-export const createBlog = async (formData: createFormData) => {
+export const createBlog = async (formData: TCreateFormData) => {
    const supabase = await createClient()
 
    const user = await supabase
@@ -63,13 +63,13 @@ export const createBlog = async (formData: createFormData) => {
  * 0 = undefined
  * 1 = null
  */
-type updateFormData = TypedFormData<{
+type TUpdateFormData = TypedFormData<{
    title?: string
    content?: string
    image: File | '0' | '1'
 }>
 
-export const updateBlog = async (id: string, formData: updateFormData) => {
+export const updateBlog = async (id: string, formData: TUpdateFormData) => {
    const supabase = await createClient()
 
    const {
@@ -149,7 +149,7 @@ export const deleteBlog = async (id: string) => {
       .eq('created_by', user?.id as string)
       .single()
 
-   if (blog === null) {
+   if (!blog) {
       throw new Error('Unauthorized')
    }
 

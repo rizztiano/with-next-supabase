@@ -52,7 +52,13 @@ const BlogSingle = async ({ slug }: { slug: string }) => {
                <h1 className='text-2xl font-semibold'>{blog.title}</h1>
             </div>
             {blog.imageUrl && (
-               <ImageZoom className='relative h-80 w-full shadow-lg shrink-0 rounded-lg overflow-hidden'>
+               <ImageZoom
+                  className='relative h-80 w-full shadow-lg shrink-0 rounded-lg overflow-hidden'
+                  zoomImg={{
+                     src: blog.imageUrl,
+                     alt: `${blog?.id} - ${blog?.title}`
+                  }}
+               >
                   <Image
                      objectFit='cover'
                      fill

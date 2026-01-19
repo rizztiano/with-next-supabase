@@ -42,7 +42,6 @@ const BlogNewComment = ({ toggleNewComment }: IBlogNewCommentProps) => {
       if (!event.target.files) return
 
       const files = Array.from(event.target.files)
-      console.log(files)
       setSelectedFiles(files)
    }
 

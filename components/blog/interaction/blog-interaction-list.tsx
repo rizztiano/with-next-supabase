@@ -1,18 +1,21 @@
 import { getComments } from '@/actions/blog-interactions'
 import BlogInteraction from '@/components/blog/interaction/blog-interaction'
+import BlogInteractionMod from '@/components/blog/interaction/blog-interaction-mod'
 import { Badge } from '@/components/ui/badge'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
+import { createClient } from '@/lib/supabase/server'
 import { User } from 'lucide-react'
 import Image from 'next/image'
 
 const BlogInteractionList = async ({ id }: { id: string }) => {
+   const supabase = await createClient()
    const comments = await getComments(id)
 
    return (
       <div className='flex flex-col w-full gap-6'>
          <BlogInteraction count={comments.count} />
          <div className='flex flex-col gap-10'>
-            {comments.data?.map((comment) => {
+            {comments.data?.map(async (comment) => {
                return (
                   <div className='flex gap-2' key={comment.id}>
                      <div className='shrink-0'>
@@ -21,11 +24,15 @@ const BlogInteractionList = async ({ id }: { id: string }) => {
                         />
                      </div>
                      <div className='flex-col flex w-full gap-2'>
-                        <Badge
-                           className={`self-start ${comment.profile?.name && `bg-blue-500/80`}`}
-                        >
-                           {comment.profile?.name || 'Anonymous'}
-                        </Badge>
+                        <div className='flex justify-between items-center'>
+                           <Badge
+                              className={`self-start ${comment.profile?.name && `bg-blue-500/80`} rounded-md`}
+                           >
+                              {comment.profile?.name || 'Anonymous'}
+                           </Badge>
+                           {(await supabase.auth.getUser()).data.user?.id ===
+                              comment.created_by && <BlogInteractionMod comment={comment} />}
+                        </div>
                         <div className='w-full flex flex-col p-2 bg-blue-50 rounded-md gap-3'>
                            {comment.blog_interaction_attachments.length > 0 && (
                               <div className='grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1'>

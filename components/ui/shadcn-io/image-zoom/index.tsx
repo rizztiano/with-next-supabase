@@ -8,6 +8,7 @@ export type ImageZoomProps = UncontrolledProps & {
    onZoomChange?: ControlledProps['onZoomChange']
    className?: string
    backdropClassName?: string
+   zoomImg?: React.ImgHTMLAttributes<HTMLImageElement>
 }
 
 export const ImageZoom = ({ className, backdropClassName, ...props }: ImageZoomProps) => (
