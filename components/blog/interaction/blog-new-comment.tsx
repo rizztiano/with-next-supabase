@@ -27,6 +27,7 @@ interface IBlogNewCommentProps {
 
 const BlogNewComment = ({ toggleNewComment }: IBlogNewCommentProps) => {
    const { id } = useContext(BlogSingleContext)
+
    const form = useForm<formSchema>({
       resolver: zodResolver(schema),
       defaultValues: {

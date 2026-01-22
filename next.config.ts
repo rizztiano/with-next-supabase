@@ -11,10 +11,16 @@ const nextConfig: NextConfig = {
          }
       ]
    },
+   logging: {
+      fetches: {
+         fullUrl: true
+      }
+   },
    experimental: {
       serverActions: {
          bodySizeLimit: '20mb'
-      }
+      },
+      useCache: true
    }
 }
 

@@ -6,19 +6,16 @@ import BlogSingleContextProvider from '@/contexts/blog-single-context'
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
 import Image from 'next/image'
+import { cache } from 'react'
 
-const BlogSingle = async ({ slug }: { slug: string }) => {
+export const getSingleBlog = cache(async (blogId: string) => {
    const supabase = await createClient()
    const {
       data: { user }
    } = await supabase.auth.getUser()
 
-   const { data } = await supabase.from('blogs').select('*, profile (*)').eq('id', slug).single()
+   const { data } = await supabase.from('blogs').select('*, profile (*)').eq('id', blogId).single()
    const blog = data as IBlogCard['blog']
-
-   if (!blog) {
-      return <h1 className='text-red-800'>Blog not found!</h1>
-   }
 
    if (blog.image) {
       const file = supabase.storage.from('blog-feature')
@@ -29,6 +26,21 @@ const BlogSingle = async ({ slug }: { slug: string }) => {
             await supabase.storage.from('blog-feature').createSignedUrl(blog.image, 86400)
          ).data?.signedUrl
       }
+   }
+
+   return blog
+})
+
+const BlogSingle = async ({ slug }: { slug: string }) => {
+   const supabase = await createClient()
+   const {
+      data: { user }
+   } = await supabase.auth.getUser()
+
+   const blog = await getSingleBlog(slug)
+
+   if (!blog) {
+      return <h1 className='text-red-800'>Blog not found!</h1>
    }
 
    const belongsToAuthUser = blog.created_by === user?.id

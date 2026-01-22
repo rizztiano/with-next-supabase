@@ -1,7 +1,8 @@
+'use server'
+
 import { Database } from '@/types/supabase'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { cache } from 'react'
 
 /**
  * Especially important if using Fluid compute: Don't put this client in a
@@ -9,20 +10,7 @@ import { cache } from 'react'
  * it.
  */
 
-export function createStaticFetch(options: Pick<RequestInit, 'next' | 'cache'> = {}) {
-   return (url: string | URL | Request, init?: RequestInit) =>
-      fetch(url, {
-         ...init,
-         next: {
-            revalidate: 3600,
-            tags: ['blogs'],
-            ...options.next
-         },
-         cache: options.cache ?? 'force-cache'
-      })
-}
-
-export async function createRawClient(key: 'anon' | 'secret' = 'secret') {
+export async function createClient(key: 'anon' | 'secret' = 'secret') {
    const cookieStore = await cookies()
 
    let secret = ''
@@ -54,5 +42,3 @@ export async function createRawClient(key: 'anon' | 'secret' = 'secret') {
       }
    })
 }
-
-export const createClient = cache(() => createRawClient())

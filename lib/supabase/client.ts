@@ -1,6 +1,18 @@
-import { createStaticFetch } from '@/lib/supabase/server'
 import { Database } from '@/types/supabase'
 import { createBrowserClient } from '@supabase/ssr'
+
+export function createStaticFetch(options: Pick<RequestInit, 'next' | 'cache'> = {}) {
+   return (url: string | URL | Request, init?: RequestInit) =>
+      fetch(url, {
+         ...init,
+         next: {
+            revalidate: 3600,
+            tags: ['blogs'],
+            ...options.next
+         },
+         cache: options.cache ?? 'force-cache'
+      })
+}
 
 export function createWebClient() {
    return createBrowserClient<Database>(
