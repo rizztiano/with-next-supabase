@@ -11,7 +11,31 @@ import {
 } from '@/components/ui/pagination'
 import { sbServerIsAuthenticated } from '@/lib/supabase/helpers'
 import { createClient } from '@/lib/supabase/server'
+import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
+
+export const getBlogs = unstable_cache(
+   async (props: { mine: boolean; start: number; end: number }) => {
+      const supabase = await createClient()
+      const authenticated = await sbServerIsAuthenticated()
+
+      let query = supabase.from('blogs').select(`
+         *,
+         profile (*)
+      `)
+
+      if (authenticated && props.mine) {
+         query = query.eq('created_by', (await supabase.auth.getUser()).data.user?.id as string)
+      }
+
+      return await query.order('created_at', { ascending: false }).range(props.start, props.end)
+   },
+   ['blogs'],
+   {
+      tags: ['blogs'],
+      revalidate: 1800
+   }
+)
 
 const BlogList = async ({
    mine,
